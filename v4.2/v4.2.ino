@@ -1,46 +1,51 @@
+//Подключение библеотек
 #include <Adafruit_ST7735.h>
 #include <Adafruit_GFX.h>
 #include <Wire.h>
 #include <SPI.h>
 #include "EEPROM.h"
+#include "DHT.h"
 
+
+//Объявление выводы дисплея
 #define TFT_CS     10
 #define TFT_RST    9                      
 #define TFT_DC     8
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
-
-
 #define TFT_SCLK 13   
 #define TFT_MOSI 11   
 
+//Создания объекта дисплея
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
+
+//Объявление переменных для температуры
 float maxTemperature=0;
 float minTemperature=200;
 char charMinTemperature[10];
 char charMaxTemperature[10];
-char timeChar[100];
-char dateChar[50];
 char temperatureChar[10];
-
 float temperature = 0;
 float previousTemperature = 0;
 
+//Объявление переменных для времени
+char timeChar[100];
+char dateChar[50];
 String dateString;
 int minuteNow=0;
 int minutePrevious=0;
-
 unsigned long last_time;
-
 #define DS3231_I2C_ADDRESS 104
 byte tMSB, tLSB;
 byte hh, mm, ss;
 byte yy, ll, dd, zz;
 
+//Объявление вывод кнопок и пищалки
 #define meniu A0 
 #define minus A1
 #define plus A2
 #define alarm A3
 #define buzzer 4
 
+//Переменная режимов
 int nivel = 0;   
 
 int hh1, mm1, zz1, dd1, ll1, yy1;   
@@ -52,12 +57,10 @@ byte al;
 byte xa = 80;
 byte ya = 70;
 
-#include "DHT.h"
+//Температура + Влажность
 #define DHTPIN 6     
 #define DHTTYPE DHT11   
-
 DHT dht(DHTPIN, DHTTYPE);
-
 int umiditate;
 int tzeci, tunit, tzecimi, trest;
 int tsemn, ttot;
@@ -67,14 +70,19 @@ char umiditateChar[10];
 unsigned long masurare;
 unsigned long intervalmasurare = 30000;
 
+//Установочный блок
 void setup () 
 {
+//Инициализация термометра и дисплея
 dht.begin(); 
 tft.initR(INITR_BLACKTAB);
 tft.fillScreen(ST7735_BLACK);
 
+//Для Com порта
 Serial.begin(9600);
 Wire.begin();
+
+//Установка выводы на In или Out
 pinMode(meniu, INPUT); 
 pinMode(plus, INPUT); 
 pinMode(minus, INPUT); 
@@ -85,13 +93,15 @@ digitalWrite(plus, HIGH);
 digitalWrite(minus, HIGH);
 digitalWrite(alarm, HIGH);
 digitalWrite(buzzer, LOW);
+
+  //Предварительная печать на экране температуры и влажности, поскольку в loop они печатаются только при изменении значения или инициализации
     printText(utf8rus("ТЕМПЕРАТУРА"), ST7735_GREEN,5,90,1);  
     printText(utf8rus("ВЛАЖНОСТЬ"), ST7735_RED,5,110,1);
 
+//Чтение параметров будильника из памяти (если значения выходят из границ допустимых значений, устанавливаются с выключенным статусом на 7.00)
 hha = EEPROM.read(100);
 mma = EEPROM.read(101);
 al = EEPROM.read(102);
-
 if ((hha < 0) || (hha > 23)) hha = 7;
 if ((mma < 0) || (mma > 59)) mma = 0;
 if ((al < 0) || (al > 1)) al = 0;
@@ -99,9 +109,9 @@ if ((al < 0) || (al > 1)) al = 0;
 masurare = millis();
 }
 
-void loop () 
+void loop () //Основной цикл
 {
-  if (nivel !=0)// Данные для отладки
+  if (nivel !=0)//Вывод в ком порт изменяемых значений при настройки
   {
 Serial.print( "hour " );
 Serial.println(hh1);
@@ -117,9 +127,10 @@ Serial.print("ear ");
 Serial.println(yy1);
 Serial.println("");
 }
-  
-if (nivel == 0) //Стандартный вид
-{                                                                                  
+
+  //Мигающая точка между часами и минутами                                                                        
+if (nivel == 0) //Основной режим
+{          
     if(round(millis()/1000  %2)){
     printText(":", ST7735_YELLOW,58,25,3);
     }
@@ -152,9 +163,7 @@ masurare = millis();
     }
     halarma.toCharArray(timeChar,100);
                                                                                   
-   
-          
-                                                                      
+   //Будильник                                                                 
 if (mma == mm & hha == hh & al%2)
 {
   if(round(millis()/500  %2)){
@@ -190,7 +199,7 @@ if (al%2 == 1)
 }
  
   minuteNow = mm;
-  if(minuteNow!=minutePrevious || initial)
+  if(minuteNow!=minutePrevious || initial) // Следующая минута
   {
     initial = 0;
     dateString = getDayOfWeek(zz)+", ";
@@ -219,7 +228,7 @@ if (al%2 == 1)
     printText(dateChar, ST7735_GREEN,8,5,1);
   }
   
-  if ((temperature != previousTemperature) || initial)
+  if ((temperature != previousTemperature) || initial) //Смена температуры
   {
     previousTemperature = temperature;
     String temperatureString = String(temperature,1);
@@ -229,7 +238,7 @@ if (al%2 == 1)
     printText("o", ST7735_WHITE,107,87,1);
     printText("C", ST7735_WHITE,113,90,1);
 
-  if((umiditate != previousHumidity) || initial)
+  if((umiditate != previousHumidity) || initial) //Смена влажности
   {
     previousHumidity = umiditate;
     String umiditateString = String(umiditate);
@@ -240,7 +249,7 @@ if (al%2 == 1)
   }
   }
   
-  if (digitalRead(meniu) == LOW)
+  if (digitalRead(meniu) == LOW) //Нажатие кнопки SEt
   {
   nivel = nivel+1;
   hh1=hh;
@@ -354,8 +363,7 @@ tft.fillRect(10,35,70,18,ST7735_BLACK);
 printText(utf8rus("ГОДА:"), ST7735_GREEN,10,35,2);  // 
 dtostrf(yy1,3, 0, chartemp); 
       tft.fillRect(40,50,80,30,ST7735_BLACK);
-      tft.fillRect(10,80,100,30,ST7735_BLACK);  // erase last explication...
-      delay(50);
+      tft.fillRect(10,80,100,30,ST7735_BLACK);        delay(50);
       printText("20", ST7735_WHITE,45,60,2);
       printText(chartemp, ST7735_WHITE,60,60,2);
       delay(50);
@@ -506,7 +514,7 @@ if (nivel >=7||nivel<=-4 ) // Возвращение на основной эк�
  }
 }  // Конец основного цикла
 
-void checkMeniu() //Проверка нажатия кнопки meniu
+void checkMeniu() //Проверка нажатия кнопки set
 {
  if (digitalRead(meniu) == LOW)
   {
@@ -517,7 +525,7 @@ void checkMeniu() //Проверка нажатия кнопки meniu
   }    
 }
 
-void checkMeniuAlarm() //Проверка нажатия кнопки meniu для экранов будильника
+void checkMeniuAlarm() //Проверка нажатия кнопки set для экранов будильника
 {
  if (digitalRead(meniu) == LOW)
   {
@@ -659,3 +667,4 @@ void readDS3231time(byte *second,byte *minute, byte *hour,byte *dayOfWeek, byte 
     *month = bcdToDec(Wire.read());
     *year = bcdToDec(Wire.read());
 }
+
