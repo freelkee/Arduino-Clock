@@ -1,4 +1,4 @@
-Объектом исследования является разработка часов реального времени с возможностью установки будильника, с помощью модуля DS3231 на платформе Arduino UNO. 
-Цель работы – разработать часы реального времени с последующим их тестированием. 
-В процессе выполнения работы была, разработана структура и принцип действия часов реального времени, провелась разработка программного обеспечения для самого микроконтроллера (скетч в Arduino IDE). Также на основе технического задания и структурной схемы были проанализирована и подобрана элементная база, разработаны функциональная схема и алгоритм работы устройства, и написана программа, реализующая работу часов реального времени.
-В результате выполнения работы был разработан прототип устройства на базе микроконтроллера Arduino UNO, позволяющий выводить реальное временя на дисплей, настраивать параметры времени и ставить будильник.
+The object of the research is to develop a real time clock with the possibility of setting an alarm clock, using the DS3231 module on the Arduino UNO platform. 
+The purpose of the work is to develop a real-time clock with subsequent testing. 
+In the course of the work, the structure and principle of the real-time clock was developed, the software for the microcontroller was developed (sketch in Arduino IDE). Also, based on the technical specification and the circuit diagram we analyzed and selected an element base, developed a functional scheme and algorithm of the device, and wrote a program that implements the real-time clock.
+As a result of the work, a prototype device based on the Arduino UNO microcontroller was developed, which allows to display the real time on the display, set the time parameters and set the alarm clock.
