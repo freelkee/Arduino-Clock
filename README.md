@@ -1,4 +1,4 @@
-The object of the research is to develop a real time clock with the possibility of setting an alarm clock, using the DS3231 module on the Arduino UNO platform. 
-The purpose of the work is to develop a real-time clock with subsequent testing. 
-In the course of the work, the structure and principle of the real-time clock was developed, the software for the microcontroller was developed (sketch in Arduino IDE). Also, based on the technical specification and the circuit diagram we analyzed and selected an element base, developed a functional scheme and algorithm of the device, and wrote a program that implements the real-time clock.
-As a result of the work, a prototype device based on the Arduino UNO microcontroller was developed, which allows to display the real time on the display, set the time parameters and set the alarm clock.
+The objective of the research is to design a real-time clock with an alarm clock feature, utilizing the DS3231 module on the Arduino UNO platform.
+The purpose of this project is to develop a functioning real-time clock and conduct subsequent testing.
+During the course of the project, we established the structure and principle of the real-time clock, developed the microcontroller's software (sketch in Arduino IDE). Additionally, we analyzed the technical specifications and circuit diagram to select the appropriate components, devised a functional scheme and algorithm for the device, and created a program to implement the real-time clock.
+As a result of our efforts, we successfully built a prototype device using the Arduino UNO microcontroller. This device is capable of displaying the current time on a display, adjusting time parameters, and setting an alarm clock.
